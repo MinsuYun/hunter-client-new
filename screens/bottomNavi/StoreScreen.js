@@ -35,7 +35,10 @@ const Teams = [
     },
     teamimages: [
       {
-        imgUrl: { uri: "https://i.pinimg.com/564x/25/5a/ec/255aecbaaa04fab4fc27d5461ec49fd9.jpg" }
+        imgUrl: {
+          uri:
+            "https://i.pinimg.com/564x/25/5a/ec/255aecbaaa04fab4fc27d5461ec49fd9.jpg"
+        }
       },
       {
         imgUrl: require("../../assets/team1-1.jpg")
@@ -228,9 +231,12 @@ export default class StoreScreen extends Component {
             toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy }
           }).start(() => {
             //사라진 다음 다음 사진을 0,0 좌표에 set 하는 부분
-            this.setState({ currentIndex: this.state.currentIndex + 1, pictrueIndex: 0 }, () => {
-              this.position.setValue({ x: 0, y: 0 });
-            });
+            this.setState(
+              { currentIndex: this.state.currentIndex + 1, pictrueIndex: 0 },
+              () => {
+                this.position.setValue({ x: 0, y: 0 });
+              }
+            );
           });
         }
         // 왼쪽으로 스와이프 할 때
@@ -239,9 +245,12 @@ export default class StoreScreen extends Component {
           Animated.spring(this.position, {
             toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy }
           }).start(() => {
-            this.setState({ currentIndex: this.state.currentIndex + 1, pictrueIndex: 0 }, () => {
-              this.position.setValue({ x: 0, y: 0 });
-            });
+            this.setState(
+              { currentIndex: this.state.currentIndex + 1, pictrueIndex: 0 },
+              () => {
+                this.position.setValue({ x: 0, y: 0 });
+              }
+            );
           });
         }
         // 둘다 아니면 실행
@@ -256,7 +265,11 @@ export default class StoreScreen extends Component {
   }
 
   _onChangeIndex = e => {
-    if (e === "rightArrow" && this.state.pictrueIndex < Teams[this.state.currentIndex].teamimages.length - 1) {
+    if (
+      e === "rightArrow" &&
+      this.state.pictrueIndex <
+        Teams[this.state.currentIndex].teamimages.length - 1
+    ) {
       this.setState({
         pictrueIndex: this.state.pictrueIndex + 1
       });
@@ -273,9 +286,12 @@ export default class StoreScreen extends Component {
     Animated.spring(this.position, {
       toValue: { x: -SCREEN_WIDTH - 100, y: -20 }
     }).start(() => {
-      this.setState({ currentIndex: this.state.currentIndex + 1, pictrueIndex: 0 }, () => {
-        this.position.setValue({ x: 0, y: 0 });
-      });
+      this.setState(
+        { currentIndex: this.state.currentIndex + 1, pictrueIndex: 0 },
+        () => {
+          this.position.setValue({ x: 0, y: 0 });
+        }
+      );
     });
   };
 
@@ -283,9 +299,12 @@ export default class StoreScreen extends Component {
     Animated.spring(this.position, {
       toValue: { x: SCREEN_WIDTH + 100, y: -20 }
     }).start(() => {
-      this.setState({ currentIndex: this.state.currentIndex + 1, pictrueIndex: 0 }, () => {
-        this.position.setValue({ x: 0, y: 0 });
-      });
+      this.setState(
+        { currentIndex: this.state.currentIndex + 1, pictrueIndex: 0 },
+        () => {
+          this.position.setValue({ x: 0, y: 0 });
+        }
+      );
     });
   };
 
@@ -319,16 +338,26 @@ export default class StoreScreen extends Component {
               }
             ]}
           >
-            <Animated.View style={{ opacity: this.likeOpacity, ...styles.likeBorder }}>
+            <Animated.View
+              style={{ opacity: this.likeOpacity, ...styles.likeBorder }}
+            >
               <Text style={styles.likeText}>LIKE</Text>
             </Animated.View>
 
-            <Animated.View style={{ opacity: this.dislikeOpacity, ...styles.dislikeBorder }}>
+            <Animated.View
+              style={{ opacity: this.dislikeOpacity, ...styles.dislikeBorder }}
+            >
               <Text style={styles.dislikeText}>NOPE</Text>
             </Animated.View>
 
             <Image
-              style={{ flex: 1, height: "100%", width: "100%", resizeMode: "cover", borderRadius: 20 }}
+              style={{
+                flex: 1,
+                height: "100%",
+                width: "100%",
+                resizeMode: "cover",
+                borderRadius: 20
+              }}
               source={item.teamimages[this.state.pictrueIndex].imgUrl}
             />
             <Animated.View
@@ -341,8 +370,24 @@ export default class StoreScreen extends Component {
                 marginLeft: "5%"
               }}
             >
-              <Text style={{ color: "floralwhite", fontWeight: "bold", fontSize: 20 }}>트벤져스</Text>
-              <Text style={{ color: "floralwhite", fontWeight: "bold", fontSize: 15 }}>한짝가능요</Text>
+              <Text
+                style={{
+                  color: "floralwhite",
+                  fontWeight: "bold",
+                  fontSize: 20
+                }}
+              >
+                트벤져스
+              </Text>
+              <Text
+                style={{
+                  color: "floralwhite",
+                  fontWeight: "bold",
+                  fontSize: 15
+                }}
+              >
+                한짝가능요
+              </Text>
             </Animated.View>
           </Animated.View>
         );
@@ -363,7 +408,13 @@ export default class StoreScreen extends Component {
             ]}
           >
             <Image
-              style={{ flex: 1, height: null, width: null, resizeMode: "cover", borderRadius: 20 }}
+              style={{
+                flex: 1,
+                height: null,
+                width: null,
+                resizeMode: "cover",
+                borderRadius: 20
+              }}
               source={item.teamimages[0].imgUrl}
             />
           </Animated.View>
@@ -375,8 +426,17 @@ export default class StoreScreen extends Component {
   render() {
     return (
       <View style={{ ...styles.backGround }}>
-        <View style={{ flex: 1, flexDirection: "column", justifyContent: "space-between", alignContent: "center" }}>
-          <View style={{ flex: 0.9, height: "100%", flexDirection: "column" }}>{this.renderUsers()}</View>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "column",
+            justifyContent: "space-between",
+            alignContent: "center"
+          }}
+        >
+          <View style={{ flex: 0.9, height: "100%", flexDirection: "column" }}>
+            {this.renderUsers()}
+          </View>
           <View style={styles.arrow}>
             <AntDesign
               id="leftArrow"
@@ -385,7 +445,11 @@ export default class StoreScreen extends Component {
               onPress={() => this._onChangeIndex("leftArrow")}
             />
             <View>
-              <Ionicons name="md-refresh" style={styles.refreshButton} onPress={() => this._onPresRefresh()} />
+              <Ionicons
+                name="md-refresh"
+                style={styles.refreshButton}
+                onPress={() => this._onPresRefresh()}
+              />
             </View>
             <AntDesign
               id="rightArrow"

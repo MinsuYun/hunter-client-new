@@ -1,5 +1,12 @@
 import React, { Fragment, Component } from "react";
-import { StyleSheet, Text, AsyncStorage, View, Modal, KeyboardAvoidingView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  AsyncStorage,
+  View,
+  Modal,
+  KeyboardAvoidingView
+} from "react-native";
 import { Input, Button, Icon } from "react-native-elements";
 import { LinearGradient, Constants } from "expo";
 import { url } from "../../url";
@@ -10,7 +17,6 @@ class SignInTitle extends Component {
     return <Text style={styles.title}>SignIn</Text>;
   }
 }
-
 //로그인 입력창
 class InputBars extends Component {
   render() {
@@ -48,6 +54,10 @@ export default class SignUp extends Component {
     errorPassword: "",
     errorLogin: "",
     userId: null,
+
+    //teamId
+    teamInfo: null,
+
     modalVisible: false
   };
 
@@ -74,19 +84,90 @@ export default class SignUp extends Component {
         })
       }).then(async res => {
         if (res.ok) {
+          console.log(res, "fucking res");
+          JWT = JSON.parse(res._bodyInit).token;
           console.log("--------login success---------", res.ok);
           flag = true;
-          await this.setState({
-            userId: JSON.parse(res._bodyInit).id
-          });
-          this._signInAsync();
         } else {
           console.log("--------login fail---------", res.ok);
           flag = false;
           this.setModalVisible(true);
         }
+        //////
+
+        //JWT
+        fetch(`${url}/users/info`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `JWT ${JWT}`
+          }
+        }).then(async res => {
+          console.log(JWT, "JWT!!!!!! SignIn.js lines 102");
+
+          if (res.ok) {
+            await this.setState({
+              userId: JSON.parse(res._bodyInit).userInfo.id
+            });
+
+            fetch(`${url}/teams/getUserIdTeam/` + this.state.userId, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json"
+              }
+            }).then(async res => {
+              if (res.ok) {
+                console.log(JSON.parse(res._bodyInit), "ssibalsagie");
+                if (JSON.parse(res._bodyInit)) {
+                  await this.setState({
+                    teamInfo: JSON.parse(res._bodyInit).teams[0]
+                  });
+                }
+                this._signInAsync();
+              }
+            });
+          }
+        });
+
+        /////
       });
     }
+  };
+
+  //로그인 성공시, userToken 저장하고 ChooseSex로 보내주는 함수
+  _signInAsync = async () => {
+    const { userId, teamInfo } = this.state;
+    console.log(this.state.teamInfo, "teamInfo SignIn.js 146 lines");
+    teamInfo
+      ? this.props.navigation.navigate("Home", { userId, teamInfo })
+      : this.props.navigation.navigate("ChooseSex", { userId });
+
+    ////////////////////////////////////////////////////////////
+    // await AsyncStorage.getItem("userToken");
+    // console.log(userToken,'userToken')
+
+    // const userTokenArr = userToken.split("-");
+
+    // //유저의 아이디
+    // const userId = userTokenArr[userTokenArr.length - 1];
+    // const locationId = userTokenArr[userTokenArr.length -2];
+    // const teamname = userTokenArr[userTokenArr.length -3];
+    // const comment = userTokenArr[userTokenArr.length -4];
+    // const age = userTokenArr[userTokenArr.length -5];
+    // const count = userTokenArr[userTokenArr.length -5];
+    // const sex = userTokenArr[userTokenArr.length -6];
+
+    // //team아디
+    // const id = userTokenArr[userTokenArr.length -7];
+
+    // userId && locationId && teamname && comment && age && count && sex && id ?
+    // this.props.navigation.navigate( "Home", {userId, locationId, teamname, comment, age, count, sex, id} )
+    // :
+    // this.props.navigation.navigate("SignIn");
+
+    ////////////////////////////////////////////////////////////
+
+    //asyncstorage의 userToken에 userId를 같이 저장하여 어떤 screen에서든 userId를 통해 데이터베이스에서 정보를 가져올 수 있게 한다.
   };
 
   //id, password 에러 잡아내는 함수 에러 없다면 this._submit함수 실행시켜서 로그인 시도
@@ -112,19 +193,10 @@ export default class SignUp extends Component {
     return flag;
   };
 
-  //로그인 성공시, userToken 저장하고 ChooseSex로 보내주는 함수
-  _signInAsync = async () => {
-    userId = this.state.userId;
-
-    //asyncstorage의 userToken에 userId를 같이 저장하여 어떤 screen에서든 userId를 통해 데이터베이스에서 정보를 가져올 수 있게 한다.
-    await AsyncStorage.setItem("userToken", "aasertetdbc" + "-" + userId);
-    this.props.navigation.navigate("ChooseSex", { userId });
-  };
-
   // 에러메세지 띄우는 함수
   _errorMsg = check => {
     const state = this.state;
-    if (!!state[check]) {
+    if (state[check]) {
       return <Text style={{ color: "white" }}>{state[check]}</Text>;
     }
   };
@@ -145,25 +217,42 @@ export default class SignUp extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={["coral", "#f44283", "#f441bb", "#8341f4"]} style={styles.backGround}>
+        <LinearGradient
+          colors={["coral", "#f44283", "#f441bb", "#8341f4"]}
+          style={styles.backGround}
+        >
           <SignInTitle style={styles.title} />
 
-          <KeyboardAvoidingView style={styles.KeyboardAvoidingViewStyle} behavior="padding" enabled>
+          <KeyboardAvoidingView
+            style={styles.KeyboardAvoidingViewStyle}
+            behavior="padding"
+            enabled
+          >
             <InputBars changeErr={this._changeErr} errorMsg={this._errorMsg} />
           </KeyboardAvoidingView>
 
           <View style={styles.buttonHouse}>
             <Button
-              title=" LetsGo"
+              title=" SignIn"
               color="white"
-              style={styles.nextButton}
-              icon={{ type: "font-awesome", name: "check-circle", color: "pink", marginBottom: "5%" }}
+              buttonStyle={{ width: "100%" }}
+              // style={styles.nextButton}
+              icon={{
+                type: "font-awesome",
+                name: "check-circle",
+                color: "pink"
+              }}
               onPress={this._submit}
             />
             <Button
-              icon={{ type: "font-awesome", name: "check-circle", color: "pink" }}
+              icon={{
+                type: "font-awesome",
+                name: "check-circle",
+                color: "pink"
+              }}
               title=" SignUp"
               color="white"
+              buttonStyle={{ width: "100%" }}
               onPress={() => {
                 this.props.navigation.navigate("SignUp");
               }}
@@ -179,7 +268,14 @@ export default class SignUp extends Component {
           >
             <View style={styles.modalStyle}>
               <View style={styles.inModalStyle}>
-                <Text style={{ color: "white", fontSize: 15, fontWeight: "bold", padding: 15 }}>
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 15,
+                    fontWeight: "bold",
+                    padding: 15
+                  }}
+                >
                   {" "}
                   아이디 혹은 비밀번호를 확인해주세요{" "}
                 </Text>
@@ -228,7 +324,11 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 30
   },
-  KeyboardAvoidingViewStyle: { flex: 0.5, width: "100%", paddingTop: Constants.statusBarHeight },
+  KeyboardAvoidingViewStyle: {
+    flex: 0.5,
+    width: "100%",
+    paddingTop: Constants.statusBarHeight
+  },
   inputContainer: {
     flex: 1,
     flexDirection: "column",

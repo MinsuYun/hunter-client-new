@@ -34,22 +34,26 @@ const Dot = props => {
 
 export default class TeamPicture1 extends Component {
   state = {
-    image: this.props.navigation.state.params.data.image || { 0: null, 1: null, 2: null },
-    sex: this.props.navigation.state.params.data.sex,
-    teamname: this.props.navigation.state.params.data.teamname,
-    count: this.props.navigation.state.params.data.count,
-    averageAge: this.props.navigation.state.params.data.age,
-    comment: this.props.navigation.state.params.data.comment,
-    userId: this.props.navigation.state.params.data.userId,
-    locationId: this.props.navigation.state.params.data.locationId
+    // image: this.props.navigation.state.params.data.image || {
+    //     0: null,
+    //     1: null,
+    //     2: null
+    // },
+    // sex: this.props.navigation.state.params.data.sex,
+    // teamname: this.props.navigation.state.params.data.teamname,
+    // count: this.props.navigation.state.params.data.count,
+    // averageAge: this.props.navigation.state.params.data.age,
+    // comment: this.props.navigation.state.params.data.comment,
+    // userId: this.props.navigation.state.params.data.userId,
+    // locationId: this.props.navigation.state.params.data.locationId
 
-    // image: { 0: null, 1: null, 2: null },
-    // sex: 1,
-    // teamname: "FBing",
-    // count: 4,
-    // averageAge: 30,
-    // comment: "do you know gangnamstyle",
-    // userId: 5
+    image: { 0: null, 1: null, 2: null },
+    sex: 1,
+    teamname: "FBing",
+    count: 4,
+    averageAge: 30,
+    comment: "do you know gangnamstyle",
+    userId: 5
   };
 
   _uploadImageAsync = async uri => {
@@ -70,14 +74,14 @@ export default class TeamPicture1 extends Component {
       headers: {
         Accept: "application/json",
         "Content-Type": "multipart/form-data",
-        userId: this.props.navigation.state.params.data.userId
-        // userId: 5
+        // userId: this.props.navigation.state.params.data.userId
+        userId: 5
       }
     };
     return await fetch(apiUrl, options);
   };
 
-  _pickImage = async () => {
+  _pickImage = async num => {
     const { status: cameraRollPerm } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
     if (cameraRollPerm === "granted") {
@@ -87,7 +91,7 @@ export default class TeamPicture1 extends Component {
       });
 
       let image = this.state.image;
-      image[0] = pickerResult.uri;
+      image[num] = pickerResult.uri;
       this.setState({ image: image });
     }
   };
@@ -108,17 +112,27 @@ export default class TeamPicture1 extends Component {
       alert(" 또안되네시발 ");
     } finally {
       const { averageAge, comment, count, image, locationId, sex, teamname, userId } = this.state;
-      
-      this.props.navigation.navigate("SetTeamPicture2", { averageAge, comment, count, image, locationId, sex, teamname, userId});
+
+      this.props.navigation.navigate("Home", {
+        sex,
+        teamname,
+        count,
+        averageAge,
+        comment,
+        image,
+        userId,
+        locationId
+      });
       console.log("upload!");
     }
   };
 
   componentDidMount = () => {};
   render() {
-    console.log(this.props.navigation.state.params, 'props... setTeamPicture1.js 118lines')
     const { sex, teamname, count, averageAge, comment, image, userId, locationId } = this.state;
     firstImage = image[0];
+    secondImage = image[1];
+    thirdImage = image[2];
     return (
       <LinearGradient colors={["coral", "#f44283", "#f441bb", "#8341f4"]} style={styles.backGround}>
         <View style={styles.container}>
@@ -154,23 +168,85 @@ export default class TeamPicture1 extends Component {
             />
           </View>
           <View style={styles.titleContainer}>
-            <Title name="첫 번째 팀 사진을 저장해주세요" />
+            <Title name="팀 사진을 저장해주세요" />
             <Title name="(사진 누르면 수정가능)" />
           </View>
+          <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <View>
+              <Title name="가장 섹시한 사진을 넣어주세요" />
+            </View>
+            {firstImage === null ? (
+              <TouchableOpacity onPress={() => this._pickImage(0)} lineHeight="300">
+                {/* <Text style={styles.text}> */}
+                <Icon name="image" color="#00aced" size={300} />
 
-          {firstImage === null ? (
-            <TouchableOpacity onPress={this._pickImage} lineHeight="300">
-              {/* <Text style={styles.text}> */}
-              <Icon name="image" color="#00aced" size={200} />
+                {/* </Text> */}
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => this._pickImage(0)}>
+                <Image
+                  source={{ uri: firstImage }}
+                  style={{
+                    width: 250,
+                    height: 350,
+                    resizeMode: "contain"
+                  }}
+                />
+              </TouchableOpacity>
+            )}
 
-              {/* </Text> */}
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={this._pickImage}>
-              <Image source={{ uri: firstImage }} style={{ width: 250, height: 350, resizeMode: "contain" }} />
-            </TouchableOpacity>
-          )}
+            <View>
+              <Title name="가장 귀여운 사진을 넣어주세요" />
+            </View>
+            {secondImage === null ? (
+              <TouchableOpacity onPress={() => this._pickImage(1)} lineHeight="300">
+                {/* <Text style={styles.text}> */}
+                <Icon name="image" color="#00aced" size={300} />
 
+                {/* </Text> */}
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => this._pickImage(1)}>
+                <Image
+                  source={{ uri: secondImage }}
+                  style={{
+                    width: 250,
+                    height: 350,
+                    resizeMode: "contain"
+                  }}
+                />
+              </TouchableOpacity>
+            )}
+
+            <View>
+              <Title name="가장 우리 팀다운 사진을 넣어주세요" />
+            </View>
+            {thirdImage === null ? (
+              <TouchableOpacity onPress={() => this._pickImage(2)} lineHeight="300">
+                {/* <Text style={styles.text}> */}
+                <Icon name="image" color="#00aced" size={300} />
+
+                {/* </Text> */}
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => this._pickImage(2)}>
+                <Image
+                  source={{ uri: thirdImage }}
+                  style={{
+                    width: 250,
+                    height: 350,
+                    resizeMode: "contain"
+                  }}
+                />
+              </TouchableOpacity>
+            )}
+          </ScrollView>
           <NextButton handleImagePicked={this._handleImagePicked} />
         </View>
       </LinearGradient>
@@ -209,12 +285,14 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     width: "100%",
+    paddingTop: "5%",
+
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center"
   },
   title: {
-    marginTop: "0%",
+    marginTop: "5%",
     width: "100%",
     color: "white",
     fontSize: 15
