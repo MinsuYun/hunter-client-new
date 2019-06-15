@@ -7,7 +7,6 @@ export default class TopBarRightIcons extends React.Component {
     super(props);
     this.state = {};
   }
-  openNewsModal = () => {};
 
   movetoChatList = async () => {
     const userToken = await AsyncStorage.getItem("userToken");
@@ -29,7 +28,7 @@ export default class TopBarRightIcons extends React.Component {
           type="font-awesome"
           iconStyle={styles.headerRightIcon}
           name="envelope"
-          onPress={() => alert("This is a button!")}
+          onPress={() => this.openNewsModal()}
         />
         <Icon
           type="font-awesome"
