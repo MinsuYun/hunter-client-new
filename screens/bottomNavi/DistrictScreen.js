@@ -9,7 +9,7 @@ import {
   PanResponder,
   AsyncStorage
 } from "react-native";
-import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
+import { SimpleLineIcons, Foundation, FontAwesome } from "@expo/vector-icons";
 import TopBarRightIcons from "../../components/bottomNavi/topBarRightIcons";
 import { url } from "../../url";
 
@@ -367,10 +367,15 @@ export default class DistrictScreen extends Component {
           {this.renderUsers()}
         </View>
 
-        <View style={{ flex: 0.1, width: "17%", padding: "5%" }}>
-          <Ionicons
-            name="md-refresh"
+        <View style={{ ...styles.featrueIcon }}>
+          <Foundation
+            name="refresh"
             style={styles.refreshButton}
+            onPress={() => this._onPresRefresh()}
+          />
+          <FontAwesome
+            name="send"
+            style={styles.sendLetter}
             onPress={() => this._onPresRefresh()}
           />
         </View>
@@ -389,6 +394,11 @@ export default class DistrictScreen extends Component {
             style={styles.rigthArrow}
             onPress={() => this._onChangeIndex("rightArrow")}
           />
+        </View>
+        <View>
+          {this.state.modalVisible && (
+            <InputModal visibleHandler={this._visibleHandler} />
+          )}
         </View>
       </View>
       // <View style={{ ...styles.backGround }}>
@@ -471,26 +481,41 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 5, height: 5 },
     textShadowRadius: 10
   },
+  featrueIcon: {
+    flex: 0.1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginLeft: "5%",
+    marginRight: "7%",
+    paddingBottom: "5%",
+    alignContent: "center"
+  },
   arrow: {
     flex: 0.1,
     flexDirection: "row",
     justifyContent: "space-around",
-    alignContent: "center"
+    alignContent: "center",
+    marginBottom: "1%"
   },
   rigthArrow: {
     height: "100%",
     color: "#dd00ff",
-    fontSize: 30
+    fontSize: 40
   },
   leftArrow: {
     height: "100%",
     color: "#dd00ff",
-    fontSize: 30
+    fontSize: 40
   },
   refreshButton: {
     height: "100%",
     color: "mediumturquoise",
-    fontSize: 30
+    fontSize: 38
+  },
+  sendLetter: {
+    height: "100%",
+    color: "mediumturquoise",
+    fontSize: 33
   },
   headerRightIcon: {
     marginRight: 15
